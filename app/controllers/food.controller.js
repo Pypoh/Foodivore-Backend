@@ -3,54 +3,136 @@ const Food = db.foods;
 
 // Test creating food
 exports.create = (req, res) => {
-    // Validate request
-    if (!req.body.title) {
-        res.status(400).send({ message: "Content can not be empty!" });
-        return;
-    }
+  // Validate request
+  if (!req.body.title) {
+    res.status(400).send({ message: "Content can not be empty!" });
+    return;
+  }
 
-    // Creating food
-    const food = new Food({
-        title: req.body.title,
-        description: req.body.description,
-    });
+  // Creating food
+  const food = new Food({
+    title: req.body.title,
+    description: req.body.description,
+  });
 
-    food.save(food).then(data => {
-        res.send(data);
-    }).catch(err => {
-        res.status(500).send({
-            message:
-            err.message || "Some error occurred while creating the Food."
-        });
+  food
+    .save(food)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the Food.",
+      });
     });
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all Foods from the database.
 exports.findAll = (req, res) => {
-  
+  const title = req.query.title;
+  var condition = title
+    ? { title: { $regex: new RegExp(title), $options: "i" } }
+    : {};
+
+  Food.find(condition)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials.",
+      });
+    });
 };
 
-// Find a single Tutorial with an id
+// Find a single Food with an id
 exports.findOne = (req, res) => {
-  
+  const id = req.params.id;
+
+  Food.findById(id)
+    .then((data) => {
+      if (!data)
+        res.status(404).send({ message: "Not found Food with id " + id });
+      else res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: "Error retrieving Food with id=" + id });
+    });
 };
 
-// Update a Tutorial by the id in the request
+// Update a Food by the id in the request
 exports.update = (req, res) => {
-  
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Data to update can not be empty!",
+    });
+  }
+
+  const id = req.params.id;
+
+  Food.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update Food with id=${id}. Maybe Food was not found!`,
+        });
+      } else res.send({ message: "Food was updated successfully." });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error updating Food with id=" + id,
+      });
+    });
 };
 
-// Delete a Tutorial with the specified id in the request
-exports.delete = (req, res) => {
-  
-};
-
-// Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-  
+  Tutorial.deleteMany({})
+    .then((data) => {
+      res.send({
+        message: `${data.deletedCount} Tutorials were deleted successfully!`,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while removing all tutorials.",
+      });
+    });
 };
 
-// Find all published Tutorials
-exports.findAllPublished = (req, res) => {
-  
+exports.delete = (req, res) => {
+  const id = req.params.id;
+
+  Food.findByIdAndRemove(id)
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete Food with id=${id}. Maybe Food was not found!`,
+        });
+      } else {
+        res.send({
+          message: "Food was deleted successfully!",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Could not delete Food with id=" + id,
+      });
+    });
 };
+
+// Find all published Food
+// exports.findAllPublished = (req, res) => {
+//     Tutorial.find({ published: true })
+//       .then(data => {
+//         res.send(data);
+//       })
+//       .catch(err => {
+//         res.status(500).send({
+//           message:
+//             err.message || "Some error occurred while retrieving tutorials."
+//         });
+//       });
+//   };

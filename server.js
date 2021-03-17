@@ -5,6 +5,7 @@ const cors = require("cors");
 const app = express();
 
 const db = require("./app/models");
+const dbConfig = require("./app/config/db.config.js");
 const Role = db.role;
 
 db.mongoose
@@ -74,7 +75,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Foodivore backend service." });
 });
 
+// routes
 require("./app/routes/food.routes")(app);
+require('./app/routes/auth.routes')(app);
+require('./app/routes/user.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

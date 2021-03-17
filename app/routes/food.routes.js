@@ -9,8 +9,8 @@ module.exports = app => {
     // Retrieve all Food
     router.get("/", foods.findAll);
   
-    // Retrieve all published Food
-    router.get("/published", foods.findAllPublished);
+    // // Retrieve all published Food
+    // router.get("/published", foods.findAllPublished);
   
     // Retrieve a single Food with id
     router.get("/:id", foods.findOne);
