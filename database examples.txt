@@ -1,0 +1,61 @@
+{
+    "imageUrl": "www.example.com",
+    "name": "Bakso",
+    "calorie": 444,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Nasi Goreng"
+    "calorie": 583,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Mi Ayam",
+    "calorie": 510,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Soto Ayam",
+    "calorie": 540,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Bubur Ayam",
+    "calorie": 372,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Bakso",
+    "calorie": 600,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Gado-gado",
+    "calorie": 318,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Sate Ayam",
+    "calorie": 350,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Batagor",
+    "calorie": 280,
+    "type": "Lunch"
+},
+{
+    "imageUrl": "www.example.com",
+    "name": "Mi Instan",
+    "calorie": 400,
+    "type": "Lunch"
+}
+

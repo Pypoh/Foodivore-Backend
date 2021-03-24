@@ -4,15 +4,17 @@ const Food = db.foods;
 // Test creating food
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
+  if (!req.body.name) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
   }
 
   // Creating food
   const food = new Food({
-    title: req.body.title,
-    description: req.body.description,
+    imageUrl: req.body.imageUrl,
+    name: req.body.name,
+    calorie: req.body.calorie,
+    type: req.body.type,
   });
 
   food
@@ -29,9 +31,9 @@ exports.create = (req, res) => {
 
 // Retrieve all Foods from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title
-    ? { title: { $regex: new RegExp(title), $options: "i" } }
+  const name = req.query.title;
+  var condition = name
+    ? { name: { $regex: new RegExp(title), $options: "i" } }
     : {};
 
   Food.find(condition)

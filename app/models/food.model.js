@@ -1,8 +1,10 @@
 module.exports = (mongoose) => {
   var schema = mongoose.Schema(
     {
-      title: String,
-      description: String,
+      imageUrl: String,
+      name: String,
+      calorie: Number,
+      type: String
     },
     { timestamps: true }
   );
