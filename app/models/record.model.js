@@ -3,13 +3,10 @@ const { SchemaType } = require("mongoose");
 module.exports = (mongoose) => {
   var schema = mongoose.Schema(
     {
-      imageUrl: String,
-      name: String,
-      calorie: Number,
-      fat: Number,
-      carb: Number,
-      prot: Number,
-      type: String
+      userId: String,
+      foodId: String,
+      type: String,
+      
     },
     { timestamps: true }
   );
@@ -20,6 +17,6 @@ module.exports = (mongoose) => {
     return object;
   });
 
-  const Food = mongoose.model("food", schema);
-  return Food;
+  const Record = mongoose.model("record", schema);
+  return Record;
 };

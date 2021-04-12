@@ -8,7 +8,7 @@ module.exports = app => {
   
     // Retrieve all Food
     router.get("/", foods.findAll);
-  
+
     // // Retrieve all published Food
     // router.get("/published", foods.findAllPublished);
   
@@ -21,7 +21,6 @@ module.exports = app => {
     // Delete a Food with id
     router.delete("/:id", foods.delete);
   
-    // Create a new Food
     router.delete("/", foods.deleteAll);
   
     app.use('/api/foods', router);

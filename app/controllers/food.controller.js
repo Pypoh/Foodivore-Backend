@@ -14,6 +14,9 @@ exports.create = (req, res) => {
     imageUrl: req.body.imageUrl,
     name: req.body.name,
     calorie: req.body.calorie,
+    fat: req.body.fat,
+    carb: req.body.carb,
+    prot: req.body.prot,
     type: req.body.type,
   });
 
@@ -31,9 +34,9 @@ exports.create = (req, res) => {
 
 // Retrieve all Foods from the database.
 exports.findAll = (req, res) => {
-  const name = req.query.title;
+  const name = req.query.name;
   var condition = name
-    ? { name: { $regex: new RegExp(title), $options: "i" } }
+    ? { name: { $regex: new RegExp(name), $options: "i" } }
     : {};
 
   Food.find(condition)
@@ -89,16 +92,16 @@ exports.update = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  Tutorial.deleteMany({})
+  Food.deleteMany({})
     .then((data) => {
       res.send({
-        message: `${data.deletedCount} Tutorials were deleted successfully!`,
+        message: `${data.deletedCount} Food were deleted successfully!`,
       });
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all tutorials.",
+          err.message || "Some error occurred while removing all foods.",
       });
     });
 };

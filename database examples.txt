@@ -1,61 +1,73 @@
 {
     "imageUrl": "www.example.com",
-    "name": "Bakso",
+    "name": "Bakso Daging Sapi",
     "calorie": 444,
+    "fat": 28.86,
+    "carb": 0.61,
+    "prot": 42.39,
     "type": "Lunch"
 },
 {
-    "imageUrl": "www.example.com",
-    "name": "Nasi Goreng"
-    "calorie": 583,
-    "type": "Lunch"
+        "imageUrl": "www.example.com",
+        "name": "Nasi Goreng",
+        "calorie": 333,
+        "fat": 12.34,
+        "carb": 41.7,
+        "prot": 12.47,
+        "type": "Lunch"
 },
 {
     "imageUrl": "www.example.com",
-    "name": "Mi Ayam",
-    "calorie": 510,
+    "name": "Mie Ayam",
+    "calorie": 421,
+    "fat": 18.74,
+    "carb": 46.21,
+    "prot": 16.7,
     "type": "Lunch"
 },
 {
     "imageUrl": "www.example.com",
     "name": "Soto Ayam",
-    "calorie": 540,
+    "calorie": 312,
+    "fat": 14.92,
+    "carb": 19.55,
+    "prot": 24.01,
     "type": "Lunch"
 },
 {
     "imageUrl": "www.example.com",
     "name": "Bubur Ayam",
     "calorie": 372,
-    "type": "Lunch"
-},
-{
-    "imageUrl": "www.example.com",
-    "name": "Bakso",
-    "calorie": 600,
-    "type": "Lunch"
+    "fat": 12.39,
+    "carb": 36.12,
+    "prot": 27.56,
+    "type": "Sarapan"
 },
 {
     "imageUrl": "www.example.com",
     "name": "Gado-gado",
     "calorie": 318,
-    "type": "Lunch"
+    "fat": 17.86,
+    "carb": 26.28,
+    "prot": 17.22,
+    "type": "Sarapan"
 },
 {
     "imageUrl": "www.example.com",
     "name": "Sate Ayam",
-    "calorie": 350,
-    "type": "Lunch"
-},
-{
-    "imageUrl": "www.example.com",
-    "name": "Batagor",
-    "calorie": 280,
+    "calorie": 101,
+    "fat": 6.67,
+    "carb": 2.19,
+    "prot": 8.79,
     "type": "Lunch"
 },
 {
     "imageUrl": "www.example.com",
     "name": "Mi Instan",
-    "calorie": 400,
-    "type": "Lunch"
+    "calorie": 350,
+    "fat": 12,
+    "carb": 52,
+    "prot": 8,
+    "type": "Sarapan"
 }
 
