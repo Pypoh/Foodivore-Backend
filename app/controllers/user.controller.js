@@ -1,6 +1,7 @@
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
+const Food = db.foods;
 const Record = db.records;
 
 exports.allAccess = (req, res) => {
@@ -76,6 +77,21 @@ exports.findOne = (req, res) => {
     });
 };
 
+exports.findOneCalorie = (req, res) => {
+  const id = req.userId;
+  User.findById(id, { calorieNeeds: 1 })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: "Not found User with id " + id });
+      } else {
+        res.send(data)
+      };
+    })
+    .catch((err) => {
+      res.status(500).send({ message: "Error retrieving User with id=" + id });
+    });
+}
+
 exports.insertRecord = (req, res) => {
   const id = req.userId;
 
@@ -87,7 +103,7 @@ exports.insertRecord = (req, res) => {
   const record = new Record({
     userId: id,
     foodId: req.body.foodId,
-    type: req.body.type,
+    consumedAt: req.body.type,
   });
 
   record
@@ -114,14 +130,31 @@ exports.findPlanByDate = (req, res) => {
   const time = parseInt(req.query.time);
   const nextDayTime = time + 1000 * 60 * 60 * 24;
 
-  const today = new Date(time)
-  const tomorrow = new Date(nextDayTime)
+  const today = new Date(time);
+  const tomorrow = new Date(nextDayTime);
+
+  const foodData = Array();
 
   Record.find({ createdAt: { $gte: today, $lte: tomorrow }, userId: id })
     .then((data) => {
-      if (!data)
+      if (!data) {
         res.status(404).send({ message: "Not found Record with id " + id });
-      else res.send(data);
+      } else {
+        // newest
+        const ids = data.map(function (doc) {
+          return doc.foodId;
+        });
+
+        console.log("ids: " + ids);
+
+        Food.find({ _id: { $in: ids } })
+          .then((data) => {
+            res.send(data)
+          })
+          .catch((err) => {
+            res.status(500).send({ message: err.message });
+          });
+      }
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });

@@ -28,6 +28,8 @@ module.exports = function (app) {
 
   app.get("/api/user", [authJwt.verifyToken], controller.findOne);
 
+  app.get("/api/user/calorie", [authJwt.verifyToken], controller.findOneCalorie);
+
   app.post("/api/user/record", [authJwt.verifyToken], controller.insertRecord);
 
   app.get("/api/user/record", [authJwt.verifyToken], controller.findPlanByDate);
