@@ -6,6 +6,7 @@ const app = express();
 
 const db = require("./app/models");
 const dbConfig = require("./app/config/db.config.js");
+const Category = require("./app/models/category.model");
 const Role = db.role;
 
 db.mongoose
@@ -15,14 +16,15 @@ db.mongoose
   })
   .then(() => {
     console.log("Successfully connect to MongoDB.");
-    initial();
+    initialRole();
+    initialCategory();
   })
   .catch((err) => {
     console.error("Connection error", err);
     process.exit();
   });
 
-function initial() {
+function initialRole() {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
       new Role({
@@ -58,6 +60,42 @@ function initial() {
   });
 }
 
+function initialCategory() {
+  Category.estimatedDocumentCount((err, count) => {
+    if (!err && count === 0) {
+      new Category({
+        name: "Kesehatan",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Kesehatan' to roles collection");
+      });
+
+      new Category({
+        name: "Penyakit",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Penyakit' to roles collection");
+      });
+
+      new Category({
+        name: "Tips & Trick",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Tips & Trick' to roles collection");
+      });
+    }
+  });
+}
+
 var corsOptions = {
   origin: "http://localhost:8081",
 };
@@ -79,6 +117,7 @@ app.get("/", (req, res) => {
 require("./app/routes/food.routes")(app);
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/article.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

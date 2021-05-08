@@ -12,6 +12,9 @@ db.records = require("./record.model.js")(mongoose);
 db.user = require("./user.model");
 db.role = require("./role.model");
 
+db.category = require("./category.model")(mongoose);
+db.article = require("./article.model")(mongoose);
+
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

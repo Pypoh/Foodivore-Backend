@@ -35,6 +35,45 @@ exports.updatePreTestData = (req, res) => {
   const activity = req.body.activity;
   const target = req.body.target;
 
+//   BMR Pria = 66,5 + (13,7 × berat badan) + (5 × tinggi badan) – (6,8 × usia)
+//   BMR Wanita = 655 + (9,6 × berat badan) + (1,8 × tinggi badan) – (4,7 × usia)
+
+  let bmr;
+
+  if (sex == "Laki-Laki") {
+    bmr = 66.5 + (13.7 * weight) + (5 * height) - (6.8 * age);
+  } else {
+    bmr = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
+  }
+
+  switch (activity) {
+    case "Ringan":
+      bmr *= 1.2;
+      break;
+    case "Biasa":
+      bmr *= 1.3;
+      break;
+    case "Aktif":
+      bmr *= 1.4;
+      break;
+    case "Sangat Aktif":
+      bmr *= 1.5;
+      break;
+  }
+
+  switch (target) {
+    case "Menurunkan berat badan":
+      bmr -= 500;
+      break;
+    case "Menjadi lebih bugar":
+      break;
+    case "Menaikkan berat badan":
+      bmr += 500;
+      break;
+  }
+  bmr = parseFloat(bmr.toFixed(2));
+  console.log(bmr);
+
   User.findByIdAndUpdate(
     req.userId,
     {
@@ -46,6 +85,8 @@ exports.updatePreTestData = (req, res) => {
         age: age,
         activty: activity,
         target: target,
+        activty: activty,
+        calorieNeeds: bmr
       },
     },
     { multi: true, useFindAndModify: true }
@@ -53,13 +94,13 @@ exports.updatePreTestData = (req, res) => {
     .then((data) => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot update User with id=${id}. Maybe Food was not found!`,
+          message: `Cannot update User with id=${req.userId}. Maybe Food was not found!`,
         });
       } else res.send({ message: "User was updated successfully." });
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error updating User with id=" + id,
+        message: "Error updating User with id=" + req.userId,
       });
     });
 };
