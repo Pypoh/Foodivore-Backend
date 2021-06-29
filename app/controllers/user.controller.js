@@ -1,8 +1,16 @@
 const db = require("../models");
+const Schedule = require("../models/schedule.model");
 const User = db.user;
 const Role = db.role;
 const Food = db.foods;
 const Record = db.records;
+
+const processFile = require("../middlewares/upload");
+const { format } = require("util");
+const { Storage } = require("@google-cloud/storage");
+// Instantiate a storage client with credentials
+const storage = new Storage({ keyFilename: "google-cloud-key.json" });
+const bucket = storage.bucket("foodivore_images");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -35,15 +43,15 @@ exports.updatePreTestData = (req, res) => {
   const activity = req.body.activity;
   const target = req.body.target;
 
-//   BMR Pria = 66,5 + (13,7 × berat badan) + (5 × tinggi badan) – (6,8 × usia)
-//   BMR Wanita = 655 + (9,6 × berat badan) + (1,8 × tinggi badan) – (4,7 × usia)
+  //   BMR Pria = 66,5 + (13,7 × berat badan) + (5 × tinggi badan) – (6,8 × usia)
+  //   BMR Wanita = 655 + (9,6 × berat badan) + (1,8 × tinggi badan) – (4,7 × usia)
 
   let bmr;
 
   if (sex == "Laki-Laki") {
-    bmr = 66.5 + (13.7 * weight) + (5 * height) - (6.8 * age);
+    bmr = 66.5 + 13.7 * weight + 5 * height - 6.8 * age;
   } else {
-    bmr = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
+    bmr = 655 + 9.6 * weight + 1.8 * height - 4.7 * age;
   }
 
   switch (activity) {
@@ -63,12 +71,12 @@ exports.updatePreTestData = (req, res) => {
 
   switch (target) {
     case "Menurunkan berat badan":
-      bmr -= 500;
+      bmr -= 250;
       break;
     case "Menjadi lebih bugar":
       break;
     case "Menaikkan berat badan":
-      bmr += 500;
+      bmr += 250;
       break;
   }
   bmr = parseFloat(bmr.toFixed(2));
@@ -83,10 +91,9 @@ exports.updatePreTestData = (req, res) => {
         weight: weight,
         sex: sex,
         age: age,
-        activty: activity,
+        activity: activity,
         target: target,
-        activty: activty,
-        calorieNeeds: bmr
+        calorieNeeds: bmr,
       },
     },
     { multi: true, useFindAndModify: true }
@@ -125,26 +132,26 @@ exports.findOneCalorie = (req, res) => {
       if (!data) {
         res.status(404).send({ message: "Not found User with id " + id });
       } else {
-        res.send(data)
-      };
+        res.send(data);
+      }
     })
     .catch((err) => {
       res.status(500).send({ message: "Error retrieving User with id=" + id });
     });
-}
+};
 
 exports.insertRecord = (req, res) => {
   const id = req.userId;
 
-  if (!req.body.foodId) {
-    res.status(400).send({ message: "Food ID can not be empty!" });
+  if (!req.body.foodId && !id && !req.body.schedule) {
+    res.status(400).send({ message: "Food Id, User Id, or Schedule can not be empty!" });
     return;
   }
 
   const record = new Record({
     userId: id,
     foodId: req.body.foodId,
-    consumedAt: req.body.type,
+    consumedAt: req.body.schedule,
   });
 
   record
@@ -186,11 +193,10 @@ exports.findPlanByDate = (req, res) => {
           return doc.foodId;
         });
 
-        console.log("ids: " + ids);
-
         Food.find({ _id: { $in: ids } })
+          .populate("schedule", "_id name scala")
           .then((data) => {
-            res.send(data)
+            res.send(data);
           })
           .catch((err) => {
             res.status(500).send({ message: err.message });
@@ -200,4 +206,134 @@ exports.findPlanByDate = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.getRecommendation = (req, res) => {
+  if (!req.userId) {
+    res.status(400).send({ message: "User ID can not be empty!" });
+    return;
+  }
+  const id = req.userId;
+
+  User.findById(id, { calorieNeeds: 1 })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: "Not found User with id " + id });
+      } else {
+        // res.send(data)
+
+        if (req.query.schedule) {
+          Schedule.findOne(
+            {
+              name: { $in: req.query.schedule },
+            },
+            (err, schedules) => {
+              if (err) {
+                res.status(500).send({ message: err });
+                return;
+              }
+
+              // count calorie need for a food
+              const suggestedCalorie =
+                (schedules.scala / 8) * data.calorieNeeds;
+
+              const maxSuggestedCalorie = suggestedCalorie;
+              const minSuggestedCalorie = suggestedCalorie - 150;
+
+              Food.find({
+                schedule: schedules._id,
+                calorie: {
+                  $lte: maxSuggestedCalorie,
+                  $gte: minSuggestedCalorie,
+                },
+              })
+                .populate("schedule", "_id name scala")
+                .then((data) => {
+                  res.send(data);
+                })
+                .catch((err) => {
+                  res.status(500).send({
+                    message:
+                      err.message ||
+                      "Some error occurred while retrieving articles.",
+                  });
+                });
+            }
+          );
+        }
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ message: "Error retrieving User with id=" + id });
+    });
+};
+
+exports.updateProfilePicture = async (req, res) => {
+  try {
+    if (!req.userId) {
+      res.status(400).send({ message: "User ID can not be empty!" });
+      return;
+    }
+    const id = req.userId;
+
+    let publicUrl;
+    await processFile(req, res);
+
+    if (!req.file) {
+      return res.status(400).send({ message: "Please upload a file!" });
+    }
+
+    // Create a new blob in the bucket and upload the file data.
+    const folderName = "profile_picture";
+    const blob = bucket.file(`${folderName}/${req.file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+    });
+
+    blobStream.on("error", (err) => {
+      res.status(500).send({ message: err.message });
+    });
+
+    blobStream.on("finish", async (data) => {
+      // Create URL for directly file access via HTTP.
+      publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+
+      // Creating food
+      User.findByIdAndUpdate(
+        req.userId,
+        {
+          $set: {
+            imageUrl: publicUrl,
+          },
+        },
+        { multi: true, useFindAndModify: true }
+      )
+        .then((data) => {
+          if (!data) {
+            res.status(404).send({
+              message: `Cannot update User with id=${req.userId}. Maybe Food was not found!`,
+            });
+          } else res.send({ message: `${id} with profile url: ${publicUrl} was updated succesfully` });
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: "Error updating User with id=" + req.userId,
+          });
+        });
+    });
+
+    blobStream.end(req.file.buffer);
+  } catch (err) {
+    if (err.code == "LIMIT_FILE_SIZE") {
+      return res.status(500).send({
+        message: "File size cannot be larger than 2MB!",
+      });
+    }
+
+    res.status(500).send({
+      message: `Could not upload the file: ${req.file.originalname}. ${err}`,
+    });
+  }
 };

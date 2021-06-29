@@ -9,7 +9,10 @@ module.exports = (mongoose) => {
       fat: Number,
       carb: Number,
       prot: Number,
-      type: String
+      schedule: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Schedule",
+      },
     },
     { timestamps: true }
   );

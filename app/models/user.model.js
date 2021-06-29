@@ -18,7 +18,8 @@ const User = mongoose.model(
         ref: "Role"
       }
     ],
-    calorieNeeds: Number
+    calorieNeeds: Number,
+    imageUrl: String
 
   })
 );

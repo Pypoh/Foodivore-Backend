@@ -68,7 +68,7 @@ exports.signup = (req, res) => {
           var token = jwt.sign({ id: user.id }, config.secret, {
             expiresIn: 86400, // 24 hours
           });
-         
+
           res.status(200).send({
             id: user._id,
             email: user.email,
@@ -126,4 +126,16 @@ exports.signin = (req, res) => {
         calorieNeeds: user.calorieNeeds,
       });
     });
+};
+
+exports.checkToken = (req, res) => {
+  const id = req.userId;
+  if (!id) {
+    res.status(500).send({ message: err });
+    return;
+  }
+
+  res.status(200).send({
+    userId: id,
+  });
 };

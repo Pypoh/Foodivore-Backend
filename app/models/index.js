@@ -13,6 +13,7 @@ db.user = require("./user.model");
 db.role = require("./role.model");
 
 db.category = require("./category.model")(mongoose);
+db.schedule = require("./schedule.model")(mongoose);
 db.article = require("./article.model")(mongoose);
 
 db.ROLES = ["user", "admin", "moderator"];

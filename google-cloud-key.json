@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "foodivore",
+  "private_key_id": "57e33c018bb5b5689e7013cea29a58c9b4210d9a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQDOmVioXt71B7gz\nFWffMjyrHaxrYXkIz0Sz7SMIwNEHjD5dsSvlIVpXqurhL8OGYqO+LZcvPVWS5ikq\nOkvaiZx9avSA/d0bMfdlAwJvRdT2StRGtiTsTdfmO0myYKHsOCEdVVepZj59/z2a\njXNTAC1kJxTSRIzepdcbz/0CrtuiFMoQ68+wZD2oaLAa5cfYGRxLIBemEWFYAJyW\nDtatLXBdPAdhg0s1l22zT5YGh0FWrNRtK5UFCG9/NhsjhAtu5q/7jQQHPtC2ZV9D\nY5OajZ8EPQ4Qq9Nb6tKu9drCvVqJPzyPAtX1R0XeSe16ybP8wxxrP/1lPxdwENa7\nB9+30/R9AgMBAAECggEAFKK4ekjPmEXnHiMbNu37pVPXbvpTbo/VWutqvmsT9d8K\nM62IpuBH9824nDl7HCcqF8rR+QP1UjDvF6qu/OsV2Gkgdunkddztywcb7SVaeidL\nQKzcz0WPNQ3i9JA2XDPXCukFUoRF5avi6VcLl9TCs+g7ai0yrOJ/s+V4bhYtFekz\nujqlc5kZb6sIjGVp88qbd9RxAUyR6ghY5Jj4V5gS1szFUV/ycgi67Cr3Xl2LXCHd\nZdzhmv49OxFxo0r8mgLZCRdBSQEOwnSElJkB6kBR7S8Lh5VAWPRCbaKJtkZGNhmd\nyzpqeSiuTkdQaWFzkKtO1SABfw0NFSvCtQeH795juQKBgQDqkrcUCtC9OUARd6Cq\n40xzgs0n1HDDlEyFh7cGkHURwjcHydQqLYFXcYiNLwcc79Fm3wCiPNn5Q+D4fK9k\nAWt6UuPSYv9hiwY/Co8s5Z175+eQHGu0LR5e46Kay5dfN/1K8s4qciEgznvh7LHT\nqRl+uxHEgFk5CVKeMFKMN8+K/wKBgQDheHtLyezImOhRYgof9aNP6ZG2GxasrhsQ\nXukZ2PgZMa2gef2qJPronz/lW6Y+ddOf79kn0S6wD21ayCBK8At6BZHe9RwDBCKz\n7YYqWm7q+KEtSgXGjm7GKNVZHn3Mh5/OiVj5RnyYFFsyjrlu1MM2RSYQQkQdCx6W\nXqneb0QsgwKBgQC+c6SFd0qHd+YWyIQAe0/lMTwUrJ1pjgybFdd6UutaIc/AWRQT\nsqKjNqDh0F78FZJ07XZ8Qt/PTFdqKQHWNnjm9knW1V33+oJ1yML6dutoYJ9YGFsy\nDLft3vB0sfwS6UiUA5N0Tvmqwzs98YloCpGSnZwNaRAICRO1MBK1mdK+TQKBgCjh\nuqFsVIWuy/jtqN5QoLL9q9D0KnFXBEs8mlF4eMvAqTW+yNLP77q8HU7OBl+u55dJ\nWvuQP0HnGjHqtYhA7CPM3L0rfk/BsTUkrT4CtbffKwJWOKPe8ZD2mHCXScILGVvO\npZZVRIQitMJ/BHpnE5pEgXlTOpx1hq9HLM/LJvZXAn8JewJQ0WkYOKA39mkbgFfS\njQ601SGgSiGBGRNVsv5mxl0fOYkuWcLgby80DhsB8yeu7dXDqentGiVjXurpCKsW\nPBWrLzkX108SfUQDz6j32xteR9jNhXi8rrqW+7A8J+l5NO1EOEF3aCpIx8LfAkfx\n8zhbvikFinb+fB/nuIYl\n-----END PRIVATE KEY-----\n",
+  "client_email": "foodivore@foodivore.iam.gserviceaccount.com",
+  "client_id": "115183745911552710186",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/foodivore%40foodivore.iam.gserviceaccount.com"
+}

@@ -28,11 +28,27 @@ module.exports = function (app) {
 
   app.get("/api/user", [authJwt.verifyToken], controller.findOne);
 
-  app.get("/api/user/calorie", [authJwt.verifyToken], controller.findOneCalorie);
+  app.get(
+    "/api/user/calorie",
+    [authJwt.verifyToken],
+    controller.findOneCalorie
+  );
 
   app.post("/api/user/record", [authJwt.verifyToken], controller.insertRecord);
 
   app.get("/api/user/record", [authJwt.verifyToken], controller.findPlanByDate);
+
+  app.get(
+    "/api/recommendation",
+    [authJwt.verifyToken],
+    controller.getRecommendation
+  );
+
+  app.post(
+    "/api/user/image",
+    [authJwt.verifyToken],
+    controller.updateProfilePicture
+  );
 
   app.post(
     "/api/user/pretest/update",
