@@ -11,6 +11,7 @@ const db = require("./app/models");
 const dbConfig = require("./app/config/db.config.js");
 const Category = require("./app/models/category.model");
 const MealSchedule = require("./app/models/schedule.model");
+const FoodType = require("./app/models/foodtype.model");
 const Role = db.role;
 
 db.mongoose
@@ -23,6 +24,7 @@ db.mongoose
     initialRole();
     initialCategory();
     initialSchedule();
+    initialFoodType();
   })
   .catch((err) => {
     console.error("Connection error", err);
@@ -116,7 +118,8 @@ function initialSchedule() {
     if (!err && count === 0) {
       new MealSchedule({
         name: "Sarapan",
-        scala: 2,
+        minPercentage: 25,
+        maxPercentage: 30,
       }).save((err) => {
         if (err) {
           console.log("error", err);
@@ -127,18 +130,20 @@ function initialSchedule() {
 
       new MealSchedule({
         name: "Camilan",
-        scala: 1,
+        minPercentage: 5,
+        maxPercentage: 10,
       }).save((err) => {
         if (err) {
           console.log("error", err);
         }
 
-        console.log("added 'Camilan Pagi' to roles collection");
+        console.log("added 'Camilan' to roles collection");
       });
 
       new MealSchedule({
         name: "Makan Siang",
-        scala: 2,
+        minPercentage: 35,
+        maxPercentage: 40,
       }).save((err) => {
         if (err) {
           console.log("error", err);
@@ -149,24 +154,72 @@ function initialSchedule() {
 
       new MealSchedule({
         name: "Minuman",
-        scala: 1,
+        minPercentage: 0,
+        maxPercentage: 10,
       }).save((err) => {
         if (err) {
           console.log("error", err);
         }
 
-        console.log("added 'Camilan Sore' to roles collection");
+        console.log("added 'Minuman' to roles collection");
       });
 
       new MealSchedule({
         name: "Makan Malam",
-        scala: 2,
+        minPercentage: 15,
+        maxPercentage: 20,
       }).save((err) => {
         if (err) {
           console.log("error", err);
         }
 
         console.log("added 'Makan Malam' to roles collection");
+      });
+    }
+  });
+}
+
+function initialFoodType() {
+  FoodType.estimatedDocumentCount((err, count) => {
+    if (!err && count === 0) {
+      new FoodType({
+        name: "Utama",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Utama' to roles collection");
+      });
+
+      new FoodType({
+        name: "Lauk",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Lauk' to roles collection");
+      });
+
+      new FoodType({
+        name: "Lalapan",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Lalapan' to roles collection");
+      });
+
+      new FoodType({
+        name: "Tambahan",
+      }).save((err) => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'Tambahan' to roles collection");
       });
     }
   });
@@ -200,6 +253,7 @@ require("./app/routes/user.routes")(app);
 require("./app/routes/article.routes")(app);
 require("./app/routes/file.routes")(app);
 require("./app/routes/schedule.routes")(app);
+require("./app/routes/ingredient.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

@@ -4,9 +4,17 @@ module.exports = (mongoose) => {
   var schema = mongoose.Schema(
     {
       userId: String,
-      foodId: String,
+      foodId: {
+        type: String,
+        default: "12345",
+      },
       consumedAt: String,
-      
+      ingredient: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Ingredient",
+        },
+      ],
     },
     { timestamps: true }
   );

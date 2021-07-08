@@ -5,6 +5,7 @@ const Role = db.role;
 const Food = db.foods;
 const Record = db.records;
 
+const mongoose = require("mongoose");
 const processFile = require("../middlewares/upload");
 const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
@@ -49,9 +50,9 @@ exports.updatePreTestData = (req, res) => {
   let bmr;
 
   if (sex == "Laki-Laki") {
-    bmr = 66.5 + 13.7 * weight + 5 * height - 6.8 * age;
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
   } else {
-    bmr = 655 + 9.6 * weight + 1.8 * height - 4.7 * age;
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
   }
 
   switch (activity) {
@@ -71,12 +72,12 @@ exports.updatePreTestData = (req, res) => {
 
   switch (target) {
     case "Menurunkan berat badan":
-      bmr -= 250;
+      bmr -= 500;
       break;
     case "Menjadi lebih bugar":
       break;
     case "Menaikkan berat badan":
-      bmr += 250;
+      bmr += 500;
       break;
   }
   bmr = parseFloat(bmr.toFixed(2));
@@ -143,15 +144,25 @@ exports.findOneCalorie = (req, res) => {
 exports.insertRecord = (req, res) => {
   const id = req.userId;
 
-  if (!req.body.foodId && !id && !req.body.schedule) {
-    res.status(400).send({ message: "Food Id, User Id, or Schedule can not be empty!" });
+  if (!id && !req.body.schedule) {
+    res.status(400).send({ message: "User Id or Schedule can not be empty!" });
     return;
+  }
+
+  let ingredient;
+
+  const ingredientReq = req.body.ingredient;
+  console.log(ingredient);
+
+  if (ingredientReq) {
+    ingredient = ingredientReq.map((id) => mongoose.Types.ObjectId(id));
   }
 
   const record = new Record({
     userId: id,
     foodId: req.body.foodId,
     consumedAt: req.body.schedule,
+    ingredient: req.body.ingredient,
   });
 
   record
@@ -193,8 +204,10 @@ exports.findPlanByDate = (req, res) => {
           return doc.foodId;
         });
 
+        
+
         Food.find({ _id: { $in: ids } })
-          .populate("schedule", "_id name scala")
+          .populate("schedule", "_id name maxPercentage minPercentage")
           .then((data) => {
             res.send(data);
           })
@@ -315,7 +328,10 @@ exports.updateProfilePicture = async (req, res) => {
             res.status(404).send({
               message: `Cannot update User with id=${req.userId}. Maybe Food was not found!`,
             });
-          } else res.send({ message: `${id} with profile url: ${publicUrl} was updated succesfully` });
+          } else
+            res.send({
+              message: `${id} with profile url: ${publicUrl} was updated succesfully`,
+            });
         })
         .catch((err) => {
           res.status(500).send({

@@ -20,7 +20,7 @@ describe("JWT Test", () => {
     it("It should return registered user id", (done) => {
       const validUserId = "608c29cbdb21be4540f9755f";
       const validToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOGMyOWNiZGIyMWJlNDU0MGY5NzU1ZiIsImlhdCI6MTYyNDU0NzY0MSwiZXhwIjoxNjI0NjM0MDQxfQ.PW8VoRKkAiq4AogBaww1KFAdyCkaqQ4BUM6bRpWg2zo";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOGMyOWNiZGIyMWJlNDU0MGY5NzU1ZiIsImlhdCI6MTYyNTY0ODk4NSwiZXhwIjoxNjI1NzM1Mzg1fQ.554kCPr0hulsisCe12Fhayq8iNIV9XktL1ZIjCmnQT0";
       chai
         .request(server)
         .post("/api/auth/token")

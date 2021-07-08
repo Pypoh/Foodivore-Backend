@@ -1,6 +1,7 @@
 const db = require("../models");
+const Ingredient = db.ingredient;
+const FoodType = require("../models/foodtype.model");
 const Food = db.foods;
-const Schedule = require("../models/schedule.model");
 
 const processFile = require("../middlewares/upload");
 const { format } = require("util");
@@ -9,7 +10,6 @@ const { Storage } = require("@google-cloud/storage");
 const storage = new Storage({ keyFilename: "google-cloud-key.json" });
 const bucket = storage.bucket("foodivore_images");
 
-// Test creating food
 exports.create = async (req, res) => {
   try {
     let publicUrl;
@@ -20,8 +20,8 @@ exports.create = async (req, res) => {
     }
 
     // Create a new blob in the bucket and upload the file data.
-    const folderName = "foods"
-    const blob = bucket.file( `${folderName}/${req.file.originalname}`);
+    const folderName = "foods";
+    const blob = bucket.file(`${folderName}/${req.file.originalname}`);
     const blobStream = blob.createWriteStream({
       resumable: false,
     });
@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
       }
 
       // Creating food
-      const food = new Food({
+      const ingredient = new Ingredient({
         imageUrl: publicUrl,
         name: req.body.name,
         calorie: req.body.calorie,
@@ -56,20 +56,20 @@ exports.create = async (req, res) => {
         prot: req.body.prot,
       });
 
-      Schedule.findOne(
+      FoodType.findOne(
         {
-          name: { $in: req.body.schedule },
+          name: { $in: req.body.foodtype },
         },
-        (err, schedules) => {
+        (err, foodtypes) => {
           if (err) {
             res.status(500).send({ message: err });
             return;
           }
+          
+          ingredient.foodtype = foodtypes._id;
 
-          food.schedule = schedules._id;
-
-          food
-            .save(food)
+          ingredient
+            .save(ingredient)
             .then((data) => {
               res.send(data);
             })
@@ -108,30 +108,30 @@ exports.findAll = (req, res) => {
       ? { name: { $regex: new RegExp(name), $options: "i" } }
       : {};
 
-    Food.find(condition)
-      .populate("schedule", "_id name maxPercentage minPercentage")
-      .exec(function (err, food) {
+    Ingredient.find(condition)
+      .populate("foodtype", "name")
+      .exec(function (err, ingredient) {
         if (err) {
           res.status(500).send({
             message:
               err.message || "Some error occurred while retrieving tutorials.",
           });
         }
-        res.send(food);
+        res.send(ingredient);
       });
-  } else if (req.query.schedule) {
-    const schedule = req.query.schedule;
-    Schedule.findOne(
+  } else if (req.query.foodtype) {
+    const foodtype = req.query.foodtype;
+    FoodType.findOne(
       {
-        name: { $in: schedule },
+        name: { $in: foodtype },
       },
-      (err, schedule) => {
+      (err, foodtype) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
-        Food.find({ schedule: schedule._id })
-        .populate("schedule", "_id name maxPercentage minPercentage")
+        Ingredient.find({ foodtype: foodtype._id })
+          .populate("foodtype", "name")
           .then((data) => {
             res.send(data);
           })
@@ -144,30 +144,25 @@ exports.findAll = (req, res) => {
       }
     );
   } else {
-    Food.find({})
-    .populate("schedule", "_id name maxPercentage minPercentage")
-    .exec(function (err, food) {
-      if (err) {
-        res.status(500).send({
-          message: err.message || "Some error occurred while retrieving foods.",
-        });
-      }
-      res.send(food);
-    });
+    Ingredient.find({})
+      .populate("foodtype", "name")
+      .exec(function (err, ingredient) {
+        if (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving foods.",
+          });
+        }
+        res.send(ingredient);
+      });
   }
-
-  // condition = schedule
-  //   ? { schedule: { $regex: new RegExp(schedule), $options: "i" } }
-  //   : {};
-
-  
 };
 
 // Find a single Food with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Food.findById(id)
+  Ingredient.findById(id)
     .then((data) => {
       if (!data)
         res.status(404).send({ message: "Not found Food with id " + id });
@@ -188,7 +183,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  Food.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  Ingredient.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then((data) => {
       if (!data) {
         res.status(404).send({
@@ -204,7 +199,7 @@ exports.update = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  Food.deleteMany({})
+  Ingredient.deleteMany({})
     .then((data) => {
       res.send({
         message: `${data.deletedCount} Food were deleted successfully!`,
@@ -220,7 +215,7 @@ exports.deleteAll = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Food.findByIdAndRemove(id)
+  Ingredient.findByIdAndRemove(id)
     .then((data) => {
       if (!data) {
         res.status(404).send({
@@ -238,17 +233,3 @@ exports.delete = (req, res) => {
       });
     });
 };
-
-// Find all published Food
-// exports.findAllPublished = (req, res) => {
-//     Tutorial.find({ published: true })
-//       .then(data => {
-//         res.send(data);
-//       })
-//       .catch(err => {
-//         res.status(500).send({
-//           message:
-//             err.message || "Some error occurred while retrieving tutorials."
-//         });
-//       });
-//   };
