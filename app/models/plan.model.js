@@ -4,17 +4,11 @@ module.exports = (mongoose) => {
   var schema = mongoose.Schema(
     {
       userId: String,
-      // foodId: String,
       consumedAt: String,
-      ingredients: [
+      ingredient: [
         {
-          ingredient: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "ingredient",
-          },
-          count: {
-            type: Number
-          }
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ingredient",
         },
       ],
     },
@@ -27,6 +21,6 @@ module.exports = (mongoose) => {
     return object;
   });
 
-  const Record = mongoose.model("record", schema);
-  return Record;
+  const Plan = mongoose.model("plan", schema);
+  return Plan;
 };

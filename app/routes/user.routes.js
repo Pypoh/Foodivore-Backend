@@ -36,7 +36,17 @@ module.exports = function (app) {
 
   app.post("/api/user/record", [authJwt.verifyToken], controller.insertRecord);
 
-  app.get("/api/user/record", [authJwt.verifyToken], controller.findPlanByDate);
+  app.get(
+    "/api/user/record",
+    [authJwt.verifyToken],
+    controller.findRecordByDate
+  );
+
+  app.post("/api/user/plan", [authJwt.verifyToken], controller.insertPlan);
+
+  app.get("/api/user/plan", [authJwt.verifyToken], controller.findPlanByDate);
+
+  app.delete("/api/user/plan/:id", [authJwt.verifyToken], controller.deletePlan);
 
   app.get(
     "/api/recommendation",

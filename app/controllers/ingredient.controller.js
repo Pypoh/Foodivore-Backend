@@ -65,7 +65,7 @@ exports.create = async (req, res) => {
             res.status(500).send({ message: err });
             return;
           }
-          
+
           ingredient.foodtype = foodtypes._id;
 
           ingredient
@@ -156,6 +156,33 @@ exports.findAll = (req, res) => {
         res.send(ingredient);
       });
   }
+};
+
+exports.findAllList = (req, res) => {
+  const nameList = req.body.names;
+
+  if (!nameList) {
+    res.status(404).send({
+      message: "Some error occurred while retrieving foods.",
+    });
+    return;
+  }
+
+  var optRegexp = [];
+  nameList.forEach(function (opt) {
+    optRegexp.push(new RegExp(opt, "i"));
+  });
+
+  Ingredient.find({ name: { $in: optRegexp } })
+    .populate("foodtype", "name")
+    .exec(function (err, food) {
+      if (err) {
+        res.status(500).send({
+          message: err.message || "Some error occurred while retrieving foods.",
+        });
+      }
+      res.send(food);
+    });
 };
 
 // Find a single Food with an id

@@ -20,8 +20,8 @@ exports.create = async (req, res) => {
     }
 
     // Create a new blob in the bucket and upload the file data.
-    const folderName = "foods"
-    const blob = bucket.file( `${folderName}/${req.file.originalname}`);
+    const folderName = "foods";
+    const blob = bucket.file(`${folderName}/${req.file.originalname}`);
     const blobStream = blob.createWriteStream({
       resumable: false,
     });
@@ -131,7 +131,7 @@ exports.findAll = (req, res) => {
           return;
         }
         Food.find({ schedule: schedule._id })
-        .populate("schedule", "_id name maxPercentage minPercentage")
+          .populate("schedule", "_id name maxPercentage minPercentage")
           .then((data) => {
             res.send(data);
           })
@@ -145,22 +145,21 @@ exports.findAll = (req, res) => {
     );
   } else {
     Food.find({})
-    .populate("schedule", "_id name maxPercentage minPercentage")
-    .exec(function (err, food) {
-      if (err) {
-        res.status(500).send({
-          message: err.message || "Some error occurred while retrieving foods.",
-        });
-      }
-      res.send(food);
-    });
+      .populate("schedule", "_id name maxPercentage minPercentage")
+      .exec(function (err, food) {
+        if (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving foods.",
+          });
+        }
+        res.send(food);
+      });
   }
 
   // condition = schedule
   //   ? { schedule: { $regex: new RegExp(schedule), $options: "i" } }
   //   : {};
-
-  
 };
 
 // Find a single Food with an id

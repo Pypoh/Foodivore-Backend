@@ -7,6 +7,8 @@ module.exports = (app) => {
 
   router.get("/", ingredients.findAll);
 
+  router.post("/all", ingredients.findAllList);
+
   router.get("/:id", ingredients.findOne);
 
   router.put("/:id", ingredients.update);

@@ -3,7 +3,9 @@ const Schedule = require("../models/schedule.model");
 const User = db.user;
 const Role = db.role;
 const Food = db.foods;
+const Ingredient = db.ingredient;
 const Record = db.records;
+const Plan = db.plans;
 
 const mongoose = require("mongoose");
 const processFile = require("../middlewares/upload");
@@ -81,7 +83,6 @@ exports.updatePreTestData = (req, res) => {
       break;
   }
   bmr = parseFloat(bmr.toFixed(2));
-  console.log(bmr);
 
   User.findByIdAndUpdate(
     req.userId,
@@ -144,25 +145,24 @@ exports.findOneCalorie = (req, res) => {
 exports.insertRecord = (req, res) => {
   const id = req.userId;
 
-  if (!id && !req.body.schedule) {
+  if (!req.body.foodId && !id && !req.body.schedule) {
     res.status(400).send({ message: "User Id or Schedule can not be empty!" });
     return;
   }
 
-  let ingredient;
+  // let ingredient;
 
-  const ingredientReq = req.body.ingredient;
-  console.log(ingredient);
+  // const ingredientReq = req.body.ingredient;
+  // console.log(ingredient);
 
-  if (ingredientReq) {
-    ingredient = ingredientReq.map((id) => mongoose.Types.ObjectId(id));
-  }
+  // if (ingredientReq) {
+  //   ingredient = ingredientReq.map((id) => mongoose.Types.ObjectId(id));
+  // }
 
   const record = new Record({
     userId: id,
-    foodId: req.body.foodId,
     consumedAt: req.body.schedule,
-    ingredient: req.body.ingredient,
+    ingredients: req.body.ingredient,
   });
 
   record
@@ -178,7 +178,85 @@ exports.insertRecord = (req, res) => {
     });
 };
 
-exports.findPlanByDate = (req, res) => {
+exports.insertPlan = (req, res) => {
+  const id = req.userId;
+
+  if (!id && !req.body.schedule) {
+    res.status(400).send({ message: "User Id or Schedule can not be empty!" });
+    return;
+  }
+
+  let ingredient;
+
+  const ingredientReq = req.body.ingredient;
+  // console.log(ingredient);
+
+  if (ingredientReq) {
+    ingredient = ingredientReq.map((id) => mongoose.Types.ObjectId(id));
+  } else {
+    res.status(400).send({ message: "Ingredient can not be empty!" });
+    return;
+  }
+
+  const plan = new Plan({
+    userId: id,
+    consumedAt: req.body.consumedAt,
+    ingredient: req.body.ingredient,
+  });
+
+  if (req.body.planId) {
+    Plan.findByIdAndUpdate(req.body.planId, req.body, { useFindAndModify: false })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update Plan with id=${id}. Maybe Plan was not found!`,
+        });
+      } else res.send({ message: "Plan was updated successfully." });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error updating Plan with id=" + id,
+      });
+    });
+    return;
+  }
+
+  plan
+    .save(plan)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the Record.",
+      });
+    });
+};
+
+exports.deletePlan = (req, res) => {
+  const id = req.params.id;
+
+  Plan.findByIdAndRemove(id)
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete Plan with id=${id}. Maybe Plan was not found!`,
+        });
+      } else {
+        res.send({
+          message: "Plan was deleted successfully!",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Could not delete Plan with id=" + id,
+      });
+    });
+};
+
+exports.findRecordByDate = (req, res) => {
   if (!req.userId) {
     res.status(400).send({ message: "User ID can not be empty!" });
     return;
@@ -195,25 +273,98 @@ exports.findPlanByDate = (req, res) => {
   const foodData = Array();
 
   Record.find({ createdAt: { $gte: today, $lte: tomorrow }, userId: id })
+    .populate({ 
+      path: 'ingredients.ingredient',
+      populate: {
+        path: 'foodtype',
+        model: 'FoodType'
+      } 
+   })
     .then((data) => {
       if (!data) {
         res.status(404).send({ message: "Not found Record with id " + id });
       } else {
-        // newest
+        res.status(200).send(data);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+
+  // Record.find({ createdAt: { $gte: today, $lte: tomorrow }, userId: id })
+  //   .then((data) => {
+  //     if (!data) {
+  //       res.status(404).send({ message: "Not found Record with id " + id });
+  //     } else {
+  //       // console.log(data);
+  //       // newest
+  //       // const ids = data.map(function (doc) {
+  //       //   // console.log(doc);
+  //       //   console.log(doc.ingredients);
+  //       //   return doc.ingredients.ingredient;
+  //       // });
+  //       console.log(data);
+  //       const dataIngredient = data.ingredients;
+
+  //       console.log(dataIngredient);
+
+  //       const ids = data.ingredients.map(function (doc) {
+  //         // console.log(doc);
+  //         // console.log(doc.ingredients);
+  //         return doc.ingredient;
+  //       });
+
+  //       console.log(ids);
+
+  //       Food.find({ _id: { $in: ids } })
+  //         .populate("schedule", "_id name maxPercentage minPercentage")
+  //         .then((data) => {
+  //           res.send(data);
+  //         })
+  //         .catch((err) => {
+  //           res.status(500).send({ message: err.message });
+  //         });
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).send({ message: err.message });
+  //   });
+};
+
+exports.findPlanByDate = (req, res) => {
+  if (!req.userId) {
+    res.status(400).send({ message: "User ID can not be empty!" });
+    return;
+  }
+
+  const id = req.userId;
+
+  const time = parseInt(req.query.time);
+  const nextDayTime = time + 1000 * 60 * 60 * 24;
+
+  const today = new Date(time);
+  const tomorrow = new Date(nextDayTime);
+
+  Plan.find({ createdAt: { $gte: today, $lte: tomorrow }, userId: id })
+  .populate('ingredient', 'name calorie')
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: "Not found Record with id " + id });
+      } else {
         const ids = data.map(function (doc) {
-          return doc.foodId;
+          return doc.ingredient;
         });
 
-        
+        res.status(200).send(data);
 
-        Food.find({ _id: { $in: ids } })
-          .populate("schedule", "_id name maxPercentage minPercentage")
-          .then((data) => {
-            res.send(data);
-          })
-          .catch((err) => {
-            res.status(500).send({ message: err.message });
-          });
+        // Ingredient.find({ _id: { $in: ids } })
+        //   .populate("foodtype", "_id name")
+        //   .then((data) => {
+        //     res.send(data);
+        //   })
+        //   .catch((err) => {
+        //     res.status(500).send({ message: err.message });
+        //   });
       }
     })
     .catch((err) => {

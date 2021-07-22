@@ -9,6 +9,7 @@ db.mongoose = mongoose;
 db.foods = require("./food.model.js")(mongoose);
 db.ingredient = require("./ingredient.model.js")(mongoose);
 db.records = require("./record.model.js")(mongoose);
+db.plans = require("./plan.model.js")(mongoose);
 
 db.user = require("./user.model");
 db.role = require("./role.model");
