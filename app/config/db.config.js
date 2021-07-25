@@ -5,5 +5,6 @@
 module.exports = {
   HOST: "localhost",
   PORT: 27017,
-  DB: "foodivore"
+  DB: "foodivore",
+  URL: "mongodb+srv://pypoh:EKzpQYVwgmLV3QEI@foodivore.t9tmd.mongodb.net/Foodivore?retryWrites=true&w=majority"
 };

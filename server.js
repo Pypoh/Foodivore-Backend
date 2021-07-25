@@ -15,11 +15,30 @@ const MealSchedule = require("./app/models/schedule.model");
 const FoodType = require("./app/models/foodtype.model");
 const Role = db.role;
 
+const connectionParams = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+};
+
+// db.mongoose
+//   .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+//     connectionParams,
+//   })
+//   .then(() => {
+//     console.log("Successfully connect to MongoDB.");
+//     initialRole();
+//     initialCategory();
+//     initialSchedule();
+//     initialFoodType();
+//   })
+//   .catch((err) => {
+//     console.error("Connection error", err);
+//     process.exit();
+//   });
+
 db.mongoose
-  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(`${dbConfig.URL}`, connectionParams)
   .then(() => {
     console.log("Successfully connect to MongoDB.");
     initialRole();
