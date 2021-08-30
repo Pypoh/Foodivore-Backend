@@ -8,4 +8,4 @@ module.exports = app => {
     router.get("/files/:name", controller.download);
   
     app.use('/api/file', router);
-  };
+  }; 

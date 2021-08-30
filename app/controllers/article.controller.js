@@ -19,7 +19,9 @@ exports.create = async (req, res) => {
     }
 
     // Create a new blob in the bucket and upload the file data.
-    const blob = bucket.file(req.file.originalname);
+    // const blob = bucket.file(req.file.originalname);
+    const folderName = "article";
+    const blob = bucket.file(`${folderName}/${req.file.originalname}`);
     const blobStream = blob.createWriteStream({
       resumable: false,
     });
