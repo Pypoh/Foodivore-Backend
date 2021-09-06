@@ -145,8 +145,14 @@ exports.findOneCalorie = (req, res) => {
 exports.insertRecord = (req, res) => {
   const id = req.userId;
 
-  if (!req.body.foodId && !id && !req.body.schedule) {
-    res.status(400).send({ message: "User Id or Schedule can not be empty!" });
+  if (req.body.consumedAt == null || req.body.consumedAt == '') {
+    res.status(400).send({ message: "Schedule can not be empty!" });
+    return;
+  }
+  const ingredientsReq = req.body.ingredient
+
+  if (ingredientsReq.length <= 0) {
+    res.status(400).send({ message: "No Ingredients inserted, please add at least one." });
     return;
   }
 
@@ -168,7 +174,8 @@ exports.insertRecord = (req, res) => {
   record
     .save(record)
     .then((data) => {
-      res.send(data);
+      res.send({ message: "Record was inserted successfully." });
+      // res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
