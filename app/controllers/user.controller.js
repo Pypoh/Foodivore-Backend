@@ -167,7 +167,7 @@ exports.insertRecord = (req, res) => {
 
   const record = new Record({
     userId: id,
-    consumedAt: req.body.schedule,
+    consumedAt: req.body.consumedAt,
     ingredients: req.body.ingredient,
   });
 
